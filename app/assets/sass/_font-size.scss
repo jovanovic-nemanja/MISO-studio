@@ -1,0 +1,31 @@
+@import "./dashboard/custom/utilities//breakpoints";
+
+$itit: 10;
+@for $var from 1 to 40 {
+    
+    @include lg {
+        .fs-#{lg}-#{$var} {
+            font-size: 2 * $var + $itit#{px} !important;
+        }
+    }
+    @include md {
+        .fs-#{md}-#{$var} {
+            font-size: 2 * $var + $itit#{px} !important;
+        }
+    }
+    @include sm {
+        .fs-#{sm}-#{$var} {
+            font-size: 2 * $var + $itit#{px} !important;
+        }
+    }
+    @include xs {
+        .fs-#{xs}-#{$var} {
+            font-size: 2 * $var + $itit#{px} !important;
+        }
+    }
+    .fs-#{$var} {
+        font-size: 2 * $var + $itit#{px} !important;
+    }
+}
+
+

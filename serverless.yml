@@ -1,0 +1,206 @@
+service:
+  name: ${self:custom.NAME}
+
+disabledDeprecations:
+ - 'NEW_VARIABLES_RESOLVER'
+
+plugins:
+  - serverless-s3-sync
+  - serverless-apigw-binary
+  - serverless-dotenv-plugin
+  - serverless-domain-manager
+
+package:
+  individually: true
+  excludeDevDependencies: true
+
+provider:
+  name: aws
+  runtime: nodejs10.x
+  stage: ${opt:stage, 'dev'}
+  region: us-east-1
+  apiGateway:
+    minimumCompressionSize: 0
+
+# NEW Settings
+custom:
+  NAME: miso-kitchen
+
+  #######################################
+  # Unique ID included in resource names.
+  # Replace it with a random value for every first distribution.
+  # https://www.random.org/strings/?num=1&len=6&digits=on&loweralpha=on&unique=on&format=html&rnd=new
+  stackId: 20201222
+  #######################################
+
+  buckets:
+    ASSETS_BUCKET_NAME: ${self:service}-${self:custom.stackId}-${self:provider.stage}-assets
+    # // S3 static bucket
+    STATIC_BUCKET_NAME: ${self:service}-${self:custom.stackId}-${self:provider.stage}-static
+  s3Sync:
+    - bucketName: ${self:custom.buckets.ASSETS_BUCKET_NAME}
+      localDir: .nuxt/dist/client
+    # // S3 static bucket
+    - bucketName: ${self:custom.buckets.STATIC_BUCKET_NAME}
+      localDir: s3
+  apigwBinary:
+    types:
+      - '*/*'
+  customDomain:
+    domainName: kitchen.instantmiso.com
+    stage: ${self:provider.stage}
+    basePath: ''
+    # certificateName: '*.instantmiso.com'
+    createRoute53Record: true
+    # endpointType: 'regional'
+    # securityPolicy: tls_1_2
+    # customDomain:
+    #   domainName: www.instantmiso.com
+    #   stage: ${self:provider.stage}
+    #   basePath: ''
+    #   # certificateName: '*.instantmiso.com'
+    #   createRoute53Record: true
+    #   # endpointType: 'regional'
+    #   # securityPolicy: tls_1_2
+
+functions:
+  renderer:
+    name: ${self:service}-${self:custom.stackId}-${self:provider.stage}-renderer
+    handler: .nuxt/dist/serverless.handler
+    memorySize: 256
+    timeout: 30
+    environment:
+      NODE_ENV: production
+    package:
+      include:
+        - .nuxt/dist/serverless.js
+        - .nuxt/dist/server/**
+      exclude:
+        - .nuxt/**
+        - app/**
+        - s3/**
+        - app.js
+        - ethereum/**
+        - nuxt.config.js
+        - nuxt.d.ts
+        - README.md
+        - server.js
+        - serverless.js
+        - serverless.yml
+        - tsconfig.json
+        - tslint.json
+        - webpack.config.js
+        - yarn-error.log
+    events:
+      - http:
+          path: /
+          method: any
+      - http:
+          path: /{proxy+}
+          method: any
+      - http:
+          path: /_nuxt/{proxy+}
+          method: any
+          integration: http-proxy
+          request:
+            uri: https://${self:custom.buckets.ASSETS_BUCKET_NAME}.s3.${self:provider.region}.amazonaws.com/{proxy}
+            parameters:
+              paths:
+                proxy: true
+          response:
+            headers:              
+              Cache-Control: "'max-age=3000'"
+      #  // S3 static bucket
+      - http:
+          path: /s3/{proxy+}
+          method: any
+          integration: http-proxy
+          request:
+            uri: https://${self:custom.buckets.STATIC_BUCKET_NAME}.s3.${self:provider.region}.amazonaws.com/{proxy}
+            parameters:
+              paths:
+                proxy: true
+          response:
+            headers:              
+              Cache-Control: "'max-age=3000'"
+resources:
+  Resources:
+    ClientAssetsBucket:
+      Type: AWS::S3::Bucket
+      Properties:
+        BucketName: ${self:custom.buckets.ASSETS_BUCKET_NAME}
+        CorsConfiguration:
+          CorsRules:
+            -
+              AllowedOrigins:
+                - '*'
+              AllowedHeaders:
+                - '*'
+              AllowedMethods:
+                - GET
+                - HEAD
+                - PUT
+                - POST
+                - DELETE
+              MaxAge: 3000
+              ExposedHeaders:
+                - x-amz-server-side-encryption
+                - x-amz-request-id
+                - x-amz-id-2
+    ClientAssetsBucketPolicy:
+      Type: AWS::S3::BucketPolicy
+      Properties:
+        Bucket:
+          Ref: ClientAssetsBucket
+        PolicyDocument:
+          Version: '2012-10-17'
+          Statement: [
+            {
+              Action: ['s3:GetObject'],
+              Effect: 'Allow',
+              Resource: {
+                Fn::Join: ['', ['arn:aws:s3:::', { Ref: 'ClientAssetsBucket' }, '/*']],
+              },
+              Principal: '*'
+            },
+          ]
+    # // S3 static bucket
+    ClientStaticBucket:
+      Type: AWS::S3::Bucket
+      Properties:
+        BucketName: ${self:custom.buckets.STATIC_BUCKET_NAME}
+        CorsConfiguration:
+          CorsRules:
+            -
+              AllowedOrigins:
+                - '*'
+              AllowedHeaders:
+                - '*'
+              AllowedMethods:
+                - GET
+                - HEAD
+                - PUT
+                - POST
+                - DELETE
+              MaxAge: 3000
+              ExposedHeaders:
+                - x-amz-server-side-encryption
+                - x-amz-request-id
+                - x-amz-id-2
+    ClientStaticBucketPolicy:
+      Type: AWS::S3::BucketPolicy
+      Properties:
+        Bucket:
+          Ref: ClientStaticBucket
+        PolicyDocument:
+          Version: '2012-10-17'
+          Statement: [
+            {
+              Action: ['s3:GetObject'],
+              Effect: 'Allow',
+              Resource: {
+                Fn::Join: ['', ['arn:aws:s3:::', { Ref: 'ClientStaticBucket' }, '/*']],
+              },
+              Principal: '*'
+            },
+          ]

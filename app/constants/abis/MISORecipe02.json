@@ -1,0 +1,229 @@
+[
+    {
+      "inputs": [
+        {
+          "name": "tokenFactory",
+          "type": "address"
+        },
+        {
+          "name": "weth",
+          "type": "address"
+        },
+        {
+          "name": "misoMarket",
+          "type": "address"
+        },
+        {
+          "name": "misoLauncher",
+          "type": "address"
+        },
+        {
+          "name": "sushiswapFactory",
+          "type": "address"
+        },
+        {
+          "name": "farmFactory",
+          "type": "address"
+        }
+      ],
+      "outputs": [],
+      "stateMutability": "nonpayable",
+      "type": "constructor"
+    },
+    {
+      "gas": 139052,
+      "inputs": [
+        {
+          "name": "name",
+          "type": "string"
+        },
+        {
+          "name": "symbol",
+          "type": "string"
+        },
+        {
+          "name": "accessControl",
+          "type": "address"
+        },
+        {
+          "name": "tokensToMint",
+          "type": "uint256"
+        },
+        {
+          "name": "tokensToMarket",
+          "type": "uint256"
+        },
+        {
+          "name": "paymentCurrency",
+          "type": "address"
+        },
+        {
+          "name": "startTime",
+          "type": "uint256"
+        },
+        {
+          "name": "endTime",
+          "type": "uint256"
+        },
+        {
+          "name": "marketRate",
+          "type": "uint256"
+        },
+        {
+          "name": "marketGoal",
+          "type": "uint256"
+        },
+        {
+          "name": "wallet",
+          "type": "address"
+        },
+        {
+          "name": "operator",
+          "type": "address"
+        },
+        {
+          "name": "deadline",
+          "type": "uint256"
+        },
+        {
+          "name": "launchwindow",
+          "type": "uint256"
+        },
+        {
+          "name": "locktime",
+          "type": "uint256"
+        },
+        {
+          "name": "tokensToLiquidity",
+          "type": "uint256"
+        },
+        {
+          "name": "rewardsPerBlock",
+          "type": "uint256"
+        },
+        {
+          "name": "startBlock",
+          "type": "uint256"
+        },
+        {
+          "name": "devAddr",
+          "type": "address"
+        },
+        {
+          "name": "tokensToFarm",
+          "type": "uint256"
+        },
+        {
+          "name": "allocPoint",
+          "type": "uint256"
+        },
+        {
+          "name": "integratorFeeAccount",
+          "type": "address"
+        }
+      ],
+      "name": "prepareMiso",
+      "outputs": [
+        {
+          "name": "",
+          "type": "address"
+        },
+        {
+          "name": "",
+          "type": "address"
+        },
+        {
+          "name": "",
+          "type": "address"
+        },
+        {
+          "name": "",
+          "type": "address"
+        },
+        {
+          "name": "",
+          "type": "address"
+        }
+      ],
+      "stateMutability": "payable",
+      "type": "function"
+    },
+    {
+      "gas": 1181,
+      "inputs": [],
+      "name": "tokenFactory",
+      "outputs": [
+        {
+          "name": "",
+          "type": "address"
+        }
+      ],
+      "stateMutability": "view",
+      "type": "function"
+    },
+    {
+      "gas": 1211,
+      "inputs": [],
+      "name": "misoMarket",
+      "outputs": [
+        {
+          "name": "",
+          "type": "address"
+        }
+      ],
+      "stateMutability": "view",
+      "type": "function"
+    },
+    {
+      "gas": 1241,
+      "inputs": [],
+      "name": "weth",
+      "outputs": [
+        {
+          "name": "",
+          "type": "address"
+        }
+      ],
+      "stateMutability": "view",
+      "type": "function"
+    },
+    {
+      "gas": 1271,
+      "inputs": [],
+      "name": "misoLauncher",
+      "outputs": [
+        {
+          "name": "",
+          "type": "address"
+        }
+      ],
+      "stateMutability": "view",
+      "type": "function"
+    },
+    {
+      "gas": 1301,
+      "inputs": [],
+      "name": "farmFactory",
+      "outputs": [
+        {
+          "name": "",
+          "type": "address"
+        }
+      ],
+      "stateMutability": "view",
+      "type": "function"
+    },
+    {
+      "gas": 1331,
+      "inputs": [],
+      "name": "sushiswapFactory",
+      "outputs": [
+        {
+          "name": "",
+          "type": "address"
+        }
+      ],
+      "stateMutability": "view",
+      "type": "function"
+    }
+]
